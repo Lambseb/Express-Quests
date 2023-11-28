@@ -8,7 +8,7 @@ const database = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
-module.exports = database;
 database.getConnection().then(() => {
   console.log("Can reach database");
 });
+module.exports = database;
