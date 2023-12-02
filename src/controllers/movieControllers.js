@@ -11,8 +11,11 @@ const getMovies = (req, res) => {
   if (req.query.max_duration != null) {
     sql += " where duration <= ?";
     sqlValues.push(req.query.max_duration);
+    
+  } else if (req.query.max_duration != null) {
+    sql += " where duration <= ?";
+    sqlValues.push(req.query.max_duration);
   }
-
   database
     .query(sql, sqlValues)
     .then(([movies]) => {
