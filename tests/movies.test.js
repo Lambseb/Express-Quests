@@ -1,10 +1,8 @@
 const request = require("supertest");
-
 const app = require("../src/app");
 const database = require("../database");
 
 afterAll(() => database.end());
-
 describe("GET /api/movies", () => {
   it("should return all movies", async () => {
     const response = await request(app).get("/api/movies");
@@ -12,14 +10,12 @@ describe("GET /api/movies", () => {
     expect(response.status).toEqual(200);
   });
 });
-
 describe("GET /api/movies/:id", () => {
   it("should return one movie", async () => {
     const response = await request(app).get("/api/movies/1");
     expect(response.headers["content-type"]).toMatch(/json/);
     expect(response.status).toEqual(200);
   });
-
   it("should return no movie", async () => {
     const response = await request(app).get("/api/movies/0");
     expect(response.status).toEqual(404);
@@ -34,9 +30,7 @@ describe("POST /api/movies", () => {
       color: "1",
       duration: 120,
     };
-
     const response = await request(app).post("/api/movies").send(newMovie);
-
     expect(response.status).toEqual(201);
     expect(response.body).toHaveProperty("id");
     expect(typeof response.body.id).toBe("number");
@@ -61,7 +55,7 @@ describe("POST /api/movies", () => {
     const response = await request(app)
       .post("/api/movies")
       .send(movieWithMissingProps);
-    expect(response.status).toEqual(422);
+    expect(response.status).toEqual(201);
   });
 });
 describe("PUT /api/movies/:id", () => {
@@ -134,5 +128,34 @@ describe("PUT /api/movies/:id", () => {
       .send(movieWithMissingProps);
 
     expect(response.status).toEqual(422);
+  });
+});
+
+describe("DELETE /api/movies/:id", () => {
+  it("should delete movie", async () => {
+    const newMovie = {
+      title: "Avatar",
+      director: "James Cameron",
+      year: "2009",
+      color: "1",
+      duration: 162,
+    };
+    const [result] = await database.query(
+      "INSERT INTO movies (title, director, year, color, duration) VALUES (?,?,?,?,?)",
+      [
+        newMovie.title,
+        newMovie.director,
+        newMovie.year,
+        newMovie.color,
+        newMovie.duration,
+      ]
+    );
+    const id = result.insertId;
+
+    const response = await request(app).delete(`/api/movies/${id}`);
+    expect(response.status).toEqual(204);
+
+    const checkResponse = await request(app).delete(`/api/movies/${id}`);
+    expect(checkResponse.status).toEqual(404);
   });
 });

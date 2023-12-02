@@ -7,6 +7,7 @@ const movieControllers = require("./controllers/movieControllers");
 const usersControllers = require("./controllers/usersControllers");
 const validateMovie = require("./middlewares/validateMovie");
 const validateUser = require("./middlewares/validateUser");
+
 app.get("/api/movies", movieControllers.getMovies);
 app.post("/api/movies", validateMovie, movieControllers.postMovies);
 app.get("/api/movies/:id", movieControllers.getMovieById);

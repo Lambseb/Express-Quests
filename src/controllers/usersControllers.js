@@ -64,7 +64,6 @@ const updateUsers = (req, res) => {
 };
 const deleteUser = (req, res) => {
   const id = parseInt(req.params.id);
-
   database
     .query("DELETE FROM users WHERE id = ?", [id])
     .then(([result]) => {
